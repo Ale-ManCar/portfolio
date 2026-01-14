@@ -168,3 +168,12 @@ section {
 .contact-list a:hover {
   text-decoration: underline;
 }
+
+.footer a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
