@@ -103,3 +103,68 @@ section {
     margin-right: 1rem;
   }
 }
+
+.hero-intro {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.hero-name {
+  font-size: 2.5rem;
+  margin: 0.5rem 0;
+}
+
+.hero-role {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+
+.hero-text {
+  max-width: 600px;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.hero-buttons a {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  margin-right: 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  border: 1px solid #2563eb;
+  color: #2563eb;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  opacity: 0.85;
+}
+
+.contact-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.contact-list li {
+  margin-bottom: 0.5rem;
+}
+
+.contact-list a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.contact-list a:hover {
+  text-decoration: underline;
+}
