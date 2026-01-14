@@ -30,6 +30,22 @@
     }
   </style>
 </head>
+
+<div class="modal" id="project-modal">
+  <div class="modal-content">
+    <button class="modal-close">&times;</button>
+    <div class="modal-body">
+      <img id="modal-image" src="" alt="">
+      <div class="modal-info">
+        <h3 id="modal-title"></h3>
+        <p id="modal-description"></p>
+        <div class="modal-tech"></div>
+        <div class="modal-links"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <body>
 
   <!-- Header -->
@@ -47,6 +63,15 @@
         <span></span>
         <span></span>
         <span></span>
+      </button>
+
+      <button class="theme-toggle" aria-label="Cambiar tema">
+        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24">
+          <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
       </button>
     </div>
   </header>
@@ -425,7 +450,7 @@
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2024 Alejandro Mantilla. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Alejandro Mantilla. Todos los derechos reservados.</p>
         <p>Construido con ❤️ y código limpio</p>
       </div>
     </div>
@@ -437,6 +462,14 @@
       <polyline points="18 15 12 9 6 15"/>
     </svg>
   </button>
+
+  <!-- Loading Screen -->
+  <div class="preloader">
+  <div class="preloader-content">
+    <div class="spinner"></div>
+    <p>Cargando portfolio...</p>
+  </div>
+</div>
 
   <!-- JavaScript -->
   <script src="js/script.js"></script>

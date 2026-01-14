@@ -1,3 +1,80 @@
+// Preloader
+window.addEventListener('load', () => {
+  const preloader = document.querySelector('.preloader');
+  setTimeout(() => {
+    preloader.classList.add('fade-out');
+    setTimeout(() => {
+      preloader.style.display = 'none';
+    }, 500);
+  }, 1000);
+});
+
+// Efecto typing en el hero
+function initTypingEffect() {
+  const heroRole = document.querySelector('.hero-role .highlight');
+  if (!heroRole) return;
+  
+  const texts = ['Frontend', 'React', 'JavaScript', 'Web'];
+  let currentIndex = 0;
+  let currentText = '';
+  let isDeleting = false;
+  let speed = 100;
+  
+  function type() {
+    const fullText = texts[currentIndex];
+    
+    if (isDeleting) {
+      currentText = fullText.substring(0, currentText.length - 1);
+    } else {
+      currentText = fullText.substring(0, currentText.length + 1);
+    }
+    
+    heroRole.textContent = currentText;
+    
+    let delta = speed;
+    
+    if (!isDeleting && currentText === fullText) {
+      delta = 2000; // Pausa al completar
+      isDeleting = true;
+    } else if (isDeleting && currentText === '') {
+      isDeleting = false;
+      currentIndex = (currentIndex + 1) % texts.length;
+      delta = 500;
+    } else if (isDeleting) {
+      delta = speed / 2;
+    }
+    
+    setTimeout(type, delta);
+  }
+  
+  setTimeout(type, 1000);
+}
+
+// Llamar la función
+initTypingEffect();
+
+// Dark Mode Toggle
+function initThemeToggle() {
+  const themeToggle = document.querySelector('.theme-toggle');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  // Cargar tema guardado
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && prefersDark.matches)) {
+    document.documentElement.classList.add('dark-mode');
+  }
+  
+  themeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark-mode');
+    
+    // Guardar preferencia
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+}
+
+initThemeToggle();
+
 // ===== DOM ELEMENTS =====
 const header = document.querySelector('.header');
 const menuToggle = document.querySelector('.menu-toggle');
