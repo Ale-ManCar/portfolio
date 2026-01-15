@@ -658,6 +658,19 @@ section.revealed {
   transform: translateY(30px) scale(0.95);
 }
 
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 100%;
+}
+
+.project-tags span {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  white-space: nowrap;
+}
+
 .project-card.revealed {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -714,9 +727,24 @@ section.revealed {
 }
 
 .project-content p {
-  color: var(--gray-color);
-  margin-bottom: 1.5rem;
-  line-height: 1.7;
+  max-height: 120px; /* Altura fija */
+  overflow-y: auto;  /* Scroll con rueda */
+  padding-right: 5px;
+  margin-bottom: 1rem;
+}
+
+/* Esconder barra de scroll pero permitir rueda */
+.project-content p::-webkit-scrollbar {
+  width: 4px;
+}
+
+.project-content p::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.project-content p::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .project-links {
