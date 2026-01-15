@@ -264,12 +264,22 @@ function initAnimatedCounters() {
   statNumbers.forEach(number => observer.observe(number));
 }
 
-// ===== FORM VALIDATION =====
+// ===== FORM VALIDATION & EMAILJS =====
 function initFormValidation() {
   if (!contactForm) return;
   
   const inputs = contactForm.querySelectorAll('input, textarea');
   const submitBtn = contactForm.querySelector('button[type="submit"]');
+  
+  // Inicializar EmailJS con tu USER_ID
+  (function() {
+    try {
+      emailjs.init('XUiDpjtLKmPxqNM6u'); // Tu User ID
+      console.log('✅ EmailJS inicializado correctamente');
+    } catch (error) {
+      console.error('❌ Error al inicializar EmailJS:', error);
+    }
+  })();
   
   // Validación en tiempo real
   inputs.forEach(input => {
@@ -333,7 +343,7 @@ function initFormValidation() {
     return isValid;
   }
   
-  // Enviar formulario
+  // Enviar formulario con EmailJS
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -351,19 +361,62 @@ function initFormValidation() {
     submitBtn.disabled = true;
     
     try {
+      // Preparar datos para EmailJS
       const formData = new FormData(contactForm);
-      const data = Object.fromEntries(formData);
+      const data = {
+        from_name: formData.get('name'),
+        from_email: formData.get('email'),
+        message: formData.get('message'),
+        time: new Date().toLocaleString('es-ES', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
       
-      // Simular envío (reemplazar con fetch real)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('📤 Enviando email con datos:', data);
       
-      // Simular éxito
-      showNotification('¡Mensaje enviado con éxito! Te responderé pronto.', 'success');
-      contactForm.reset();
+      // Enviar email usando EmailJS
+      const response = await emailjs.send(
+        'service_kygd9w9',    // Tu Service ID
+        'template_sbmkgff',   // Tu Template ID
+        data
+      );
+      
+      console.log('✅ Email enviado correctamente:', response);
+      
+      if (response.status === 200) {
+        showNotification('¡Mensaje enviado con éxito! Te responderé pronto.', 'success');
+        contactForm.reset();
+      } else {
+        throw new Error('Error en la respuesta de EmailJS');
+      }
       
     } catch (error) {
-      console.error('Error:', error);
-      showNotification('Error al enviar el mensaje. Por favor, inténtalo de nuevo.', 'error');
+      console.error('❌ Error al enviar el email:', error);
+      
+      // Mensajes de error específicos
+      let errorMessage = 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.';
+      
+      if (error.text && error.text.includes('quota')) {
+        errorMessage = 'Límite de emails alcanzado. Por favor, contáctame directamente por LinkedIn o GitHub.';
+      } else if (error.text && error.text.includes('Invalid')) {
+        errorMessage = 'Error en la configuración del formulario. Por favor, usa otro método de contacto.';
+      }
+      
+      showNotification(errorMessage, 'error');
+      
+      // Fallback: mostrar información de contacto
+      setTimeout(() => {
+        showNotification(
+          'Puedes contactarme directamente en: alemanacar0511@gmail.com',
+          'info'
+        );
+      }, 3000);
+      
     } finally {
       // Restaurar botón
       submitBtn.innerHTML = originalBtnHTML;
@@ -379,16 +432,48 @@ function showNotification(message, type = 'info') {
   if (!container) {
     container = document.createElement('div');
     container.className = 'notification-container';
+    container.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+    `;
     document.body.appendChild(container);
   }
   
   // Crear notificación
   const notification = document.createElement('div');
   notification.className = `notification notification-${type}`;
+  notification.style.cssText = `
+    background: ${type === 'success' ? '#10b981' : 
+                 type === 'error' ? '#ef4444' : 
+                 type === 'info' ? '#3b82f6' : '#6b7280'};
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease forwards;
+  `;
   
   notification.innerHTML = `
-    <p>${message}</p>
-    <button class="notification-close">&times;</button>
+    <div style="flex: 1; min-width: 0;">
+      <p style="margin: 0; font-weight: 500; line-height: 1.5;">${message}</p>
+    </div>
+    <button class="notification-close" 
+            style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; padding: 0 0 0 10px;">
+      &times;
+    </button>
   `;
   
   container.appendChild(notification);
@@ -424,6 +509,21 @@ function showNotification(message, type = 'info') {
       }
     }, 300);
   }
+  
+  // Añadir estilo CSS para la animación si no existe
+  if (!document.querySelector('#notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'notification-styles';
+    style.textContent = `
+      @keyframes slideIn {
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // ===== PROJECT CARD INTERACTIONS =====
@@ -450,18 +550,12 @@ function initProjectCards() {
         translateY(-10px)
         scale(1.02)
       `;
+      card.style.transition = 'transform 0.1s ease';
     });
     
     card.addEventListener('mouseleave', () => {
       card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
-    });
-    
-    // Click para modal (opcional)
-    card.addEventListener('click', (e) => {
-      if (!e.target.closest('.project-link')) {
-        // Aquí puedes agregar funcionalidad de modal si quieres
-        console.log('Proyecto clickeado:', card.dataset.project);
-      }
+      card.style.transition = 'transform 0.5s ease';
     });
   });
 }
@@ -471,18 +565,15 @@ function initSkillsHover() {
   const skills = document.querySelectorAll('.skill-tag');
   
   skills.forEach(skill => {
-    skill.addEventListener('mouseenter', (e) => {
-      const rect = e.target.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      skill.style.setProperty('--mouse-x', `${x}px`);
-      skill.style.setProperty('--mouse-y', `${y}px`);
-      skill.classList.add('hover');
+    skill.addEventListener('mouseenter', () => {
+      skill.style.transform = 'translateY(-3px) scale(1.05)';
+      skill.style.boxShadow = '0 8px 20px rgba(37, 99, 235, 0.2)';
+      skill.style.transition = 'all 0.3s ease';
     });
     
     skill.addEventListener('mouseleave', () => {
-      skill.classList.remove('hover');
+      skill.style.transform = '';
+      skill.style.boxShadow = '';
     });
   });
 }
@@ -586,8 +677,11 @@ function initPortfolio() {
   console.log('%c✨ Portfolio de Alejandro Mantilla ✨', 
     'color: #2563eb; font-size: 18px; font-weight: bold;'
   );
-  console.log('%c🚀 ¡Bienvenido! ¿Interesado en colaborar? ¡Contáctame!',
-    'color: #7c3aed; font-size: 14px;'
+  console.log('%c🚀 Formulario conectado con EmailJS - ¡Los mensajes llegarán a tu Gmail!',
+    'color: #10b981; font-size: 14px;'
+  );
+  console.log('%c📧 Service ID: service_kygd9w9 | Template ID: template_sbmkgff',
+    'color: #7c3aed; font-size: 12px;'
   );
 }
 
