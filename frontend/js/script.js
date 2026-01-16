@@ -578,6 +578,38 @@ function initSkillsHover() {
   });
 }
 
+// ==== CERTIFICATES SECTION ==== //
+function animateCertificates() {
+  const certificates = document.querySelectorAll('.certificate-card');
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+      }
+    });
+  }, observerOptions);
+
+  certificates.forEach(certificate => {
+    observer.observe(certificate);
+  });
+}
+
+// ===== INICIALIZAR TODO AL CARGAR =====
+document.addEventListener('DOMContentLoaded', function() {
+  // Tu código existente...
+  
+  // Añadir esto después de tus otras inicializaciones
+  animateCertificates();
+  
+  // Actualizar año del copyright
+  document.querySelector('.current-year').textContent = new Date().getFullYear();
+});
+
 // ===== UPDATE COPYRIGHT YEAR =====
 function updateCopyrightYear() {
   const yearElements = document.querySelectorAll('.current-year');
